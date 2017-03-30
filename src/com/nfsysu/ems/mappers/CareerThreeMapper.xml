@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.CareerThreeDao">
+
+	<resultMap type="CareerThree" id="CareerThreeResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+	</resultMap>
+	
+	<resultMap type="CareerThree" id="CareerThreeResultForOneAndTwo">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<association property="careerTwo" column="twoid" select="com.nfsysu.ems.dao.CareerTwoDao.findById"></association>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="CareerThreeResultForOneAndTwo">
+		select * from careerthree
+		<where>
+			<if test="twoid!=null">
+				and twoid=#{twoid}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from careerthree
+		<where>
+			<if test="twoid!=null">
+				and twoid=#{twoid}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="CareerThree">
+		insert into careerthree values(null,#{name},#{careerTwo.id})
+	</insert>
+	
+	<update id="update" parameterType="CareerThree">
+		update careerthree
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+			</if>
+			<if test="careerTwo!=null">
+				twoid=#{careerTwo.id},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from careerthree where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="CareerThreeResultForOneAndTwo">
+		select * from careerthree where id=#{id}
+	</select>
+	
+	<select id="findByTwoId" parameterType="Integer" resultMap="CareerThreeResult">
+		select * from careerthree where twoid=#{id}
+	</select>
+	
+</mapper> 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.EducationDao">
+
+	<resultMap type="Education" id="EducationResult">
+		<result property="id" column="id"/>
+		<result property="start" column="start"/>
+		<result property="end" column="end"/>
+		<result property="school" column="school"/>
+		<result property="major" column="major"/>
+		<result property="degree" column="degree"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="Education">
+		insert into t_education values(null,#{start},#{end},#{school},#{major},#{degree},#{resume.id})
+	</insert>
+	
+	<update id="update" parameterType="Education">
+		update t_education
+		<set>
+			<if test="start!=null">
+				start=#{start},
+			</if>
+			<if test="end!=null">
+				end=#{end},
+			</if>
+			<if test="school!=null and school!='' ">
+				school=#{school},
+			</if>
+			<if test="major!=null and major!='' ">
+				major=#{major},
+			</if>
+			<if test="degree!=null and degree!='' ">
+				degree=#{degree},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_education where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="EducationResult">
+		select * from t_education where id=#{id}
+	</select>
+	
+	<select id="findByResumeId" parameterType="Integer" resultMap="EducationResult">
+		select * from t_education where resumeId=#{id}
+	</select>
+
+</mapper> 

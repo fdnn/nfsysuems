@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.DepDao">
+
+	<resultMap type="Dep" id="DepResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+	</resultMap>
+	
+	<resultMap type="Dep" id="DepResultWithMajor">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<collection property="majorList" column="id" select="com.nfsysu.ems.dao.MajorDao.findByDepId"></collection>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="DepResultWithMajor">
+		select * from t_dep
+	</select>
+	
+	<insert id="add" parameterType="Dep">
+		insert into t_dep values(null,#{name})
+	</insert>
+	
+	<update id="update" parameterType="Dep">
+		update t_dep
+		<set>
+			<if test="name!=null and name!='' ">
+				name=#{name}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_dep where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="DepResult">
+		select * from t_dep where id=#{id}
+	</select>
+
+</mapper> 

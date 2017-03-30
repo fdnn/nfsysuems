@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.CareerOneDao">
+
+	<resultMap type="CareerOne" id="CareerOneResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="orderNo" column="orderNo"/>
+	</resultMap>
+	
+	<resultMap type="CareerOne" id="CareerOneResultWithTwo">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="orderNo" column="orderNo"/>
+		<collection property="careerTwoList" column="id" select="com.nfsysu.ems.dao.CareerTwoDao.findByOneId"></collection>
+	</resultMap>
+	
+	<resultMap type="CareerOne" id="CareerOneResultWithTwoAndThree">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="orderNo" column="orderNo"/>
+		<collection property="careerTwoList" column="id" select="com.nfsysu.ems.dao.CareerTwoDao.findByOneIdWithThree"></collection>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="CareerOneResult">
+		select * from careerone
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="findWithTwo" parameterType="Map" resultMap="CareerOneResultWithTwo">
+		select * from careerone
+		<if test="orderNum!=null">
+			order by orderNo asc limit 0,#{orderNum}
+		</if>
+	</select>
+	
+	<select id="findWithTwoAndThree" parameterType="Map" resultMap="CareerOneResultWithTwoAndThree">
+		select * from careerone
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from careerone
+	</select>
+	
+	<insert id="add" parameterType="CareerOne">
+		insert into careerone values(null,#{name},1)
+	</insert>
+	
+	<update id="update" parameterType="CareerOne">
+		update careerone
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from careerone where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="CareerOneResult">
+		select * from careerone where id=#{id}
+	</select>
+	
+	<select id="findByIdWithTwo" parameterType="Integer" resultMap="CareerOneResultWithTwo">
+		select * from careerone where id=#{id}
+	</select>
+	
+</mapper> 

@@ -1,0 +1,82 @@
+/*resume_enterprice.html*/
+.seachBox {
+    background-color: #f8f8f8;
+    border: 2px solid #d4d4d4;
+    padding: 20px;
+}
+
+.myLabel {
+    padding-top: 5px;
+    font-size: 15px;
+}
+
+input[type='text'] {
+    height: 30px;
+}
+
+.form-control {
+    border-radius: 5px 0px 0px 5px;
+}
+
+.filter {
+    font-size: 10px;
+}
+
+.filter .col-md-2 {
+    padding: 2px;
+}
+
+.filter .btn-group button {
+    border-radius: 0;
+}
+
+.myTip strong {
+    color: #4887ca;
+}
+
+.showBox_headRow {
+    height: 40px;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-top: 2px solid #5cb85c;
+}
+
+.showBox_headRow .tip_sort {
+    color: #d0d0d0;
+}
+
+table td {
+    text-align: left;
+}
+
+.head_portrait {
+    width: 80px;
+    height: 85px;
+}
+
+.diamond {
+    height: 20px;
+    width: 20px;
+}
+
+.table_tail {
+    padding: 20px;
+    border-top: 2px solid #5cb85c;
+    height: 65px;
+    background-color: #f8f8f8;
+}
+
+.headhunter {
+    border-top: 2px solid #5cb85c;
+}
+
+.headhunter .headhunter_header {
+    height: 40px;
+    padding-top: 10px;
+    padding-left: 20px;
+}
+
+.headhunter_header_cell {
+    padding-bottom: 10px;
+    border-bottom: dashed 2px #d1d1d1;
+}

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.MajorDao">
+
+	<resultMap type="Major" id="MajorResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+	</resultMap>
+	
+	<resultMap type="Major" id="MajorResultWithDep">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<association property="dep" column="depId" select="com.nfsysu.ems.dao.DepDao.findById"></association>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="MajorResultWithDep">
+		select * from t_major
+		<where>
+			<if test="userName!=null and userName!=''">
+				and userName like #{userName}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="Major">
+		insert into t_major values(null,#{name})
+	</insert>
+	
+	<update id="update" parameterType="Major">
+		update t_major
+		<set>
+			<if test="name!=null and name!='' ">
+				name=#{name}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_major where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="MajorResultWithDep">
+		select * from t_major t1,t_dep t2 where t1.depId=t2.id and t1.id=#{id}
+	</select>
+	
+	<select id="findByDepId" parameterType="Integer" resultMap="MajorResult">
+		select * from t_major where depId=#{depId}
+	</select>
+
+</mapper> 

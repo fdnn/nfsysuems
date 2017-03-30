@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.WorkExpDao">
+
+	<resultMap type="WorkExp" id="WorkExpResult">
+		<result property="id" column="id"/>
+		<result property="start" column="start"/>
+		<result property="end" column="end"/>
+		<result property="unitName" column="unitName"/>
+		<result property="unitNature" column="unitNature"/>
+		<result property="unitIndustry" column="unitIndustry"/>
+		<result property="unitScale" column="unitScale"/>
+		<result property="jobName" column="jobName"/>
+		<result property="jobDept" column="jobDept"/>
+		<result property="jobType" column="jobType"/>
+		<result property="salary" column="salary"/>
+		<result property="jobDescription" column="jobDescription"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="WorkExp">
+		insert into t_workexp values(null,#{start},#{end},#{unitName},#{unitNature},#{unitIndustry},
+		#{unitScale},#{jobName},#{jobDept},#{jobType},#{salary},#{jobDescription},#{resume.id})
+	</insert>
+	
+	<update id="update" parameterType="WorkExp">
+		update t_workexp
+		<set>
+			<if test="start!=null">
+				start=#{start},
+			</if>
+			<if test="end!=null">
+				end=#{end},
+			</if>
+			<if test="unitName!=null and unitName!='' ">
+				unitName=#{unitName},
+			</if>
+			<if test="unitNature!=null and unitNature!='' ">
+				unitNature=#{unitNature},
+			</if>
+			<if test="unitIndustry!=null and unitIndustry!='' ">
+				unitIndustry=#{unitIndustry},
+			</if>
+			<if test="unitScale!=null and unitScale!='' ">
+				unitScale=#{unitScale},
+			</if>
+			<if test="jobName!=null and jobName!='' ">
+				jobName=#{jobName},
+			</if>
+			<if test="jobDept!=null and jobDept!='' ">
+				jobDept=#{jobDept},
+			</if>
+			<if test="jobType!=null and jobType!='' ">
+				jobType=#{jobType},
+			</if>
+			<if test="salary!=null and salary!='' ">
+				salary=#{salary},
+			</if>
+			<if test="jobDescription!=null and jobDescription!='' ">
+				jobDescription=#{jobDescription},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_workexp where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="WorkExpResult">
+		select * from t_workexp where id=#{id}
+	</select>
+	
+	<select id="findByResumeId" parameterType="Integer" resultMap="WorkExpResult">
+		select * from t_workexp where resumeId=#{id}
+	</select>
+
+</mapper> 

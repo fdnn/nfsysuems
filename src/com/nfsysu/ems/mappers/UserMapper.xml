@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.UserDao">
+
+	<resultMap type="User" id="UserResult">
+		<!-- 公共属性  -->
+		<result property="id" column="id"/>
+		<result property="userName" column="userName"/>
+		<result property="password" column="password"/>
+		<result property="pic" column="pic"/>
+		<result property="address" column="address"/>
+		<result property="birthday" column="birthday"/>
+		<result property="email" column="email"/>
+		<result property="trueName" column="trueName"/>
+		<result property="qq" column="qq"/>
+		<result property="sex" column="sex"/>
+		<result property="tel" column="tel"/>
+		<result property="phone" column="phone"/>
+		<result property="role" column="role"/>
+		<result property="province" column="province"/>
+		<result property="city" column="city"/>
+		
+		<!-- 鉴别器  -->
+		<discriminator javaType="int" column="role">
+			<!-- 学生 -->
+			<case value="0" resultType="User">
+				<result property="graduationYear" column="graduationYear"/>
+				<result property="origin" column="origin"/>
+				<result property="politics" column="politics"/>
+				<result property="salary" column="salary"/>
+				<result property="status" column="status"/>
+				<result property="unit" column="unit"/>
+				<result property="resumeNum" column="resumeNum"/>
+				<association property="major" column="majorId" select="com.nfsysu.ems.dao.MajorDao.findById"></association>
+			</case>
+			<!-- 企业 -->
+			<case value="1" resultType="User">
+				<result property="introduction" column="introduction"/>
+				<result property="url" column="url"/>
+				<result property="nature" column="nature"/>
+				<result property="scale" column="scale"/>
+				<result property="linkman" column="linkman"/>
+				<result property="lnglat" column="lnglat"/>
+				<association property="careerTwo" column="industry" select="com.nfsysu.ems.dao.CareerTwoDao.findById"></association>
+			</case>
+			<!-- 管理员 -->
+			<case value="2" resultType="User">
+				<!-- 管理员二级身份 -->
+				<result property="authority" column="authority"/>
+				<association property="dep" column="depId" select="com.nfsysu.ems.dao.DepDao.findById"></association>
+			</case>
+		</discriminator>
+	</resultMap>
+	
+	<insert id="register" parameterType="User">
+		insert into t_user(userName,password,role,trueName,sex,birthday,politics,pic,graduationYear) 
+			values(#{userName},#{password},0,#{trueName},#{sex},#{birthday},#{politics},#{pic},#{graduationYear})
+	</insert>
+	
+	<select id="login" parameterType="User" resultMap="UserResult">
+		select * from t_user t1 where t1.userName=#{userName} and t1.role=#{role}
+	</select>
+	
+	<select id="existNum" parameterType="User" resultMap="UserResult">
+		select * from t_user t1 where t1.userName=#{userName} and t1.role=#{role}
+	</select>
+	
+	<select id="find" parameterType="Map" resultMap="UserResult">
+		select * from t_user
+		<where>
+			<if test="userName!=null and userName!=''">
+				and userName like #{userName}
+			</if>
+			<if test="majorId!=null and majorId!=''">
+				and majorId like #{majorId}
+			</if>
+			<if test="graduationYear!=null">
+				and year(graduationYear)=#{graduationYear}
+			</if>
+			<if test="nature!=null and nature!=''">
+				and nature like #{nature}
+			</if>
+			<if test="careerTwo!=null">
+				and industry=#{careerTwo}
+			</if>
+			<if test="scale!=null and scale!=''">
+				and scale=#{scale}
+			</if>
+			<if test="role!=null">
+				and role=#{role}
+			</if>
+			<if test="authority!=null">
+				and authority=#{authority}
+			</if>
+			<if test="depId!=null and depId!=''">
+				and depId=#{depId}
+			</if>
+			<if test="grade!=null and grade!=''">
+				and DATE_FORMAT(t_user.graduationYear,'%Y')-4=#{grade}
+			</if>
+			<if test="province!=null and province!=''">
+				and province=#{province}
+			</if>
+			<if test="city!=null and city!=''">
+				and city=#{city}
+			</if>
+			<if test="trueName!=null and trueName!=''">
+				and trueName like #{trueName}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_user
+		<where>
+			<if test="userName!=null and userName!=''">
+				and userName like #{userName}
+			</if>
+			<if test="majorId!=null and majorId!=''">
+				and majorId like #{majorId}
+			</if>
+			<if test="graduationYear!=null">
+				and year(graduationYear)=#{graduationYear}
+			</if>
+			<if test="nature!=null and nature!=''">
+				and nature like #{nature}
+			</if>
+			<if test="careerTwo!=null">
+				and industry=#{careerTwo}
+			</if>
+			<if test="scale!=null and scale!=''">
+				and scale=#{scale}
+			</if>
+			<if test="role!=null">
+				and role=#{role}
+			</if>
+			<if test="authority!=null">
+				and authority=#{authority}
+			</if>
+			<if test="depId!=null and depId!=''">
+				and depId=#{depId}
+			</if>
+			<if test="grade!=null and grade!=''">
+				and DATE_FORMAT(t_user.graduationYear,'%Y')-3=#{grade}
+			</if>
+			<if test="province!=null and province!=''">
+				and province=#{province}
+			</if>
+			<if test="city!=null and city!=''">
+				and city=#{city}
+			</if>
+			<if test="trueName!=null and trueName!=''">
+				and trueName like #{trueName}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="User">
+		insert into t_user values(null,#{userName},#{password},#{major.id},#{pic},#{address},#{birthday},#{email},#{graduationYear},#{trueName},#{origin},#{politics},#{qq},#{salary},#{sex},#{status},#{tel},#{unit},#{role},#{careerTwo.id},#{introduction},#{url},#{resumeNum},#{nature},#{scale},#{linkman},#{phone},#{lnglat},#{dep.id},#{authority},#{province},#{city})
+	</insert>
+	
+	<update id="update" parameterType="User">
+		update t_user
+		<set>
+			<if test="userName!=null and userName!='' ">
+				userName=#{userName},
+			</if>
+			<if test="password!=null and password!='' ">
+				password=#{password},
+			</if>
+			<if test="major!=null">
+				majorId=#{major.id},
+			</if>
+			<if test="address!=null and address!='' ">
+				address=#{address},
+			</if>
+			<if test="pic!=null and pic!='' ">
+				pic=#{pic},
+			</if>
+			<if test="birthday!=null">
+				birthday=#{birthday},
+			</if>
+			<if test="email!=null and email!='' ">
+				email=#{email},
+			</if>
+			<if test="graduationYear!=null">
+				graduationYear=#{graduationYear},
+			</if>
+			<if test="trueName!=null and trueName!='' ">
+				trueName=#{trueName},
+			</if>
+			<if test="origin!=null and origin!='' ">
+				origin=#{origin},
+			</if>
+			<if test="politics!=null and politics!='' ">
+				politics=#{politics},
+			</if>
+			<if test="qq!=null and qq!='' ">
+				qq=#{qq},
+			</if>
+			<if test="salary!=null and salary!='' ">
+				salary=#{salary},
+			</if>
+			<if test="sex!=null and sex!='' ">
+				sex=#{sex},
+			</if>
+			<if test="status!=null and status!='' ">
+				status=#{status},
+			</if>
+			<if test="tel!=null and tel!='' ">
+				tel=#{tel},
+			</if>
+			<if test="unit!=null and unit!='' ">
+				unit=#{unit},
+			</if>
+			<if test="careerTwo!=null">
+				industry=#{careerTwo.id},
+			</if>
+			<if test="introduction!=null and introduction!='' ">
+				introduction=#{introduction},
+			</if>
+			<if test="url!=null and url!='' ">
+				url=#{url},
+			</if>
+			<if test="nature!=null and nature!='' ">
+				nature=#{nature},
+			</if>
+			<if test="scale!=null and scale!='' ">
+				scale=#{scale},
+			</if>
+			<if test="linkman!=null and linkman!='' ">
+				linkman=#{linkman},
+			</if>
+			<if test="phone!=null and phone!='' ">
+				phone=#{phone},
+			</if>
+			<if test="lnglat!=null and lnglat!='' ">
+				lnglat=#{lnglat},
+			</if>
+			<if test="dep!=null">
+				depId=#{dep.id},
+			</if>
+			<if test="province!=null and province!=''">
+				province=#{province},
+			</if>
+			<if test="city!=null and city!=''">
+				city=#{city},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_user where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="UserResult">
+		select * from t_user where id=#{id}
+	</select>
+	
+	<select id="getByUserName" parameterType="String" resultMap="UserResult">
+		select * from t_user where userName=#{userName}
+	</select>
+	
+</mapper> 

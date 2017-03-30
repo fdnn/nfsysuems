@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.ResumeDao">
+
+	<resultMap type="Resume" id="ResumeResult">
+		<result property="id" column="id"/>
+		<result property="attachResume" column="attachResume"/>
+		<result property="refreshDate" column="refreshDate"/>
+		<result property="evaluation" column="evaluation"/>
+		<result property="attachWorks" column="attachWorks"/>
+		<result property="resumeName" column="resumeName"/>
+		<result property="salary" column="salary"/>
+		<result property="city" column="city"/>
+		<result property="province" column="province"/>
+		<result property="createDate" column="createDate"/>
+		<result property="viewedNum" column="viewedNum"/>
+	</resultMap>
+	
+	<resultMap type="Resume" id="ResumeResultWithUser">
+		<result property="id" column="id"/>
+		<result property="attachResume" column="attachResume"/>
+		<result property="refreshDate" column="refreshDate"/>
+		<result property="evaluation" column="evaluation"/>
+		<result property="attachWorks" column="attachWorks"/>
+		<result property="resumeName" column="resumeName"/>
+		<result property="salary" column="salary"/>
+		<result property="city" column="city"/>
+		<result property="province" column="province"/>
+		<result property="createDate" column="createDate"/>
+		<result property="viewedNum" column="viewedNum"/>
+		<association property="careerThree" column="careerThree" select="com.nfsysu.ems.dao.CareerThreeDao.findById"></association>
+		<association property="user" column="userId" select="com.nfsysu.ems.dao.UserDao.findById"></association>
+	</resultMap>
+	
+	<resultMap type="Resume" id="ResumeResultWithOther">
+		<result property="id" column="id"/>
+		<result property="attachResume" column="attachResume"/>
+		<result property="refreshDate" column="refreshDate"/>
+		<result property="evaluation" column="evaluation"/>
+		<result property="attachWorks" column="attachWorks"/>
+		<result property="resumeName" column="resumeName"/>
+		<result property="salary" column="salary"/>
+		<result property="city" column="city"/>
+		<result property="province" column="province"/>
+		<result property="createDate" column="createDate"/>
+		<result property="viewedNum" column="viewedNum"/>
+		<association property="careerThree" column="careerThree" select="com.nfsysu.ems.dao.CareerThreeDao.findById"></association>
+		<association property="user" column="userId" select="com.nfsysu.ems.dao.UserDao.findById"></association>
+		<collection property="certificateList" column="id" select="com.nfsysu.ems.dao.CertificateDao.findByResumeId"></collection>
+		<collection property="educationList" column="id" select="com.nfsysu.ems.dao.EducationDao.findByResumeId"></collection>
+		<collection property="itemexpList" column="id" select="com.nfsysu.ems.dao.ItemExpDao.findByResumeId"></collection>
+		<collection property="workexpList" column="id" select="com.nfsysu.ems.dao.WorkExpDao.findByResumeId"></collection>
+	</resultMap>
+	
+	<resultMap type="RecAResAna" id="ResumeAnaResult">
+		<result property="city" column="city"/>
+		<result property="cityNum" column="cityNum"/>
+		<result property="salary" column="salary"/>
+		<result property="salaryNum" column="salaryNum"/>
+		<result property="province" column="province"/>
+		<result property="provinceNum" column="provinceNum"/>
+		<result property="createDate" column="createDate"/>
+		<result property="createDateNum" column="createDateNum"/>
+		
+		<result property="one" column="one"/>
+		<result property="two" column="two"/>
+		<result property="three" column="three"/>
+		<result property="num" column="num"/>
+	</resultMap>
+	<!-- <select id="newData" resultMap="java.util.Map">
+		select last_insert_id() as newData;
+	</select> -->
+	<select id="find" parameterType="Map" resultMap="ResumeResultWithUser">
+		select * from t_resume
+		<where>
+			<if test="newData==null">
+				refreshDate IS NOT NULL and resumeName IS NOT NULL and salary IS NOT NULL
+				and city IS NOT NULL and province IS NOT NULL and careerThree IS NOT NULL
+			</if>
+			<if test="userId!=null and userId!=''">
+				and userId=#{userId}
+			</if>
+			<if test="salaryStart!=null">
+				and salary between #{salaryStart} and #{salaryEnd}
+			</if>
+			<if test="resumeName!=null and resumeName!=''">
+				and resumeName like #{resumeName}
+			</if>
+			<if test="careerOne!=null">
+				and careerOne=#{careerOne}
+			</if>
+			<if test="careerTwo!=null">
+				and careerTwo=#{careerTwo}
+			</if>
+			<if test="careerThree!=null">
+				and careerThree=#{careerThree}
+			</if>
+			<if test="province!=null and province!=''">
+				and province=#{province}
+			</if>
+			<if test="city!=null and city!=''">
+				and city=#{city}
+			</if>
+			<if test="time!=null and time!=''">
+				and DATE_SUB(CURDATE(),INTERVAL #{time} DAY) &lt;= DATE(refreshDate)
+			</if>
+		</where>
+			order by id desc
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+		<if test="newData!=null">
+			limit 1
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_resume
+		<where>
+			refreshDate IS NOT NULL and resumeName IS NOT NULL and salary IS NOT NULL
+			and city IS NOT NULL and province IS NOT NULL and careerThree IS NOT NULL
+			<if test="userId!=null and userId!=''">
+				and userId=#{userId}
+			</if>
+			<if test="salaryStart!=null">
+				and salary between #{salaryStart} and #{salaryEnd}
+			</if>
+			<if test="resumeName!=null and resumeName!=''">
+				and resumeName like #{resumeName}
+			</if>
+			<if test="careerOne!=null">
+				and careerOne=#{careerOne}
+			</if>
+			<if test="careerTwo!=null">
+				and careerTwo=#{careerTwo}
+			</if>
+			<if test="careerThree!=null">
+				and careerThree=#{careerThree}
+			</if>
+			<if test="province!=null and province!=''">
+				and province=#{province}
+			</if>
+			<if test="city!=null and city!=''">
+				and city=#{city}
+			</if>
+			<if test="time!=null and time!=''">
+				and DATE_SUB(CURDATE(),INTERVAL #{time} DAY) &lt;= DATE(refreshDate)
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="Integer">
+		insert into t_resume values(null,null,null,null,null,#{userId},null,null,null,null,null,null,null,null,0)
+	</insert>
+	
+	<update id="update" parameterType="Resume">
+		update t_resume
+		<set>
+			<if test="refreshDate!=null">
+				refreshDate=#{refreshDate},
+			</if>
+			<if test="careerThree!=null">
+				careerThree=#{careerThree.id},
+			</if>
+			<if test="evaluation!=null and evaluation!='' ">
+				evaluation=#{evaluation},
+			</if>
+			<if test="resumeName!=null and resumeName!='' ">
+				resumeName=#{resumeName},
+			</if>
+			<if test="salary!=null and salary!='' ">
+				salary=#{salary},
+			</if>
+			<if test="province!=null and province!='' ">
+				province=#{province},
+			</if>
+			<if test="city!=null and city!='' ">
+				city=#{city},
+			</if>
+			<if test="viewedNum!=null">
+				viewedNum=#{viewedNum},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_resume where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="ResumeResultWithOther">
+		select * from t_resume where id=#{id}
+	</select>
+	
+	<select id="findByUserId" parameterType="Integer" resultMap="ResumeResult">
+		select * from t_resume where userId=#{id}
+	</select>
+	
+	<select id="findGroupByCreateDate" resultMap="ResumeAnaResult">
+		SELECT DATE(dday) createDate,COUNT(*)-1 AS createDateNum FROM(SELECT datelist AS dday FROM calendar
+		 WHERE DATE_SUB(CURDATE(),INTERVAL 30 DAY)&lt;=DATE(datelist) AND DATE(datelist)&lt;=CURDATE()
+		 UNION ALL SELECT DATE_FORMAT(t_resume.createDate,'%Y-%m-%d') FROM t_resume
+		 WHERE DATE_SUB(CURDATE(),INTERVAL 30 DAY)&lt;=DATE(t_resume.createDate) 
+		 AND DATE(t_resume.createDate)&lt;=CURDATE()
+		 ) a GROUP BY createDate;
+	</select>
+	
+	<select id="findGroupByCity" resultMap="ResumeAnaResult">
+		select province,city,count(city) as cityNum from t_resume group by city order by province;
+	</select>
+	
+	<select id="findGroupByProvince" resultMap="ResumeAnaResult">
+		select province,count(province) as provinceNum from t_resume group by province order by province;
+	</select>
+	
+	<select id="findGroupByTypeOne" resultMap="ResumeAnaResult">
+		SELECT a.name AS ONE,COUNT(*) AS num 
+			FROM t_resume r LEFT JOIN careerthree c ON r.careerThree=c.id 
+			LEFT JOIN careertwo b ON c.twoid=b.id 
+			LEFT JOIN careerone a ON b.oneid=a.id 
+			GROUP BY a.name
+			ORDER BY r.careerThree
+	</select>
+	
+	<select id="findGroupByTypeTwo" resultMap="ResumeAnaResult">
+		SELECT a.name AS ONE,b.name AS two,COUNT(*) AS num 
+			FROM t_resume r LEFT JOIN careerthree c ON r.careerThree=c.id 
+			LEFT JOIN careertwo b ON c.twoid=b.id 
+			LEFT JOIN careerone a ON b.oneid=a.id 
+			GROUP BY b.name
+			ORDER BY r.careerThree
+	</select>
+	
+	<select id="findGroupByTypeThree" resultMap="ResumeAnaResult">
+		SELECT b.name AS two,c.name AS three,COUNT(*) AS num 
+			FROM t_resume r LEFT JOIN careerthree c ON r.careerThree=c.id 
+			LEFT JOIN careertwo b ON c.twoid=b.id 
+			LEFT JOIN careerone a ON b.oneid=a.id 
+			GROUP BY c.name
+			ORDER BY r.careerThree
+	</select>
+	
+	<select id="findBySalary" resultMap="ResumeAnaResult">
+		<![CDATA[
+		SELECT 
+	CASE 
+             WHEN salary <= 500 THEN '<500'
+             WHEN salary > 500 AND salary <= 1000  THEN '500-1000'
+             WHEN salary > 1000 AND salary <= 1500 THEN '1000-1500'
+             WHEN salary > 1500 AND salary <= 2000 THEN '1500-2000'
+             WHEN salary > 2000 AND salary <= 2500 THEN '2000-2500'
+             WHEN salary > 2500 AND salary <= 3000 THEN '2500-3000'
+             WHEN salary > 3000 AND salary <= 3500 THEN '3000-3500'
+             WHEN salary > 3500 AND salary <= 4000 THEN '3500-4000'
+             WHEN salary > 4000 AND salary <= 4500 THEN '4000-4500'
+             WHEN salary > 4500 AND salary <= 5000 THEN '4500-5000'
+             WHEN salary > 5000 AND salary <= 5500 THEN '5000-5500'
+             WHEN salary > 5500 AND salary <= 6000 THEN '5500-6000'
+             WHEN salary > 6000 THEN '>6000' ELSE NULL 
+        END 
+        salary,
+        COUNT(*) AS salaryNum
+FROM t_resume r
+GROUP BY
+        CASE 
+             WHEN salary <= 500 THEN '<500'
+             WHEN salary > 500 AND salary <= 1000  THEN '500-1000'
+             WHEN salary > 1000 AND salary <= 1500 THEN '1000-1500'
+             WHEN salary > 1500 AND salary <= 2000 THEN '1500-2000'
+             WHEN salary > 2000 AND salary <= 2500 THEN '2000-2500'
+             WHEN salary > 2500 AND salary <= 3000 THEN '2500-3000'
+             WHEN salary > 3000 AND salary <= 3500 THEN '3000-3500'
+             WHEN salary > 3500 AND salary <= 4000 THEN '3500-4000'
+             WHEN salary > 4000 AND salary <= 4500 THEN '4000-4500'
+             WHEN salary > 4500 AND salary <= 5000 THEN '4500-5000'
+             WHEN salary > 5000 AND salary <= 5500 THEN '5000-5500'
+             WHEN salary > 5500 AND salary <= 6000 THEN '5500-6000'
+             WHEN salary > 6000 THEN '>6000' ELSE NULL 
+        END;
+        ]]>
+	</select>
+</mapper> 

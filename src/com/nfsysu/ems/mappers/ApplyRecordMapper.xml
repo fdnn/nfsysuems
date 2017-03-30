@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.ApplyRecordDao">
+
+	<resultMap type="ApplyRecord" id="ApplyRecordResult">
+		<result property="id" column="id"/>
+		<result property="storeTime" column="storeTime"/>
+		<result property="applyTime" column="applyTime"/>
+		<result property="applyState" column="applyState"/>
+		<result property="informTime" column="informTime"/>
+		<result property="informTopic" column="informTopic"/>
+		<result property="informContent" column="informContent"/>
+		<result property="informState" column="informState"/>
+		<result property="isRefuse" column="isRefuse"/>
+		<result property="interviewTime" column="interviewTime"/>
+		<association property="user" column="userId" select="com.nfsysu.ems.dao.UserDao.findById"></association>
+		<association property="recruitInfo" column="recruitInfoId" select="com.nfsysu.ems.dao.RecruitInfoDao.findById"></association>
+		<association property="resume" column="resumeId" select="com.nfsysu.ems.dao.ResumeDao.findById"></association>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="ApplyRecordResult">
+		select * from t_applyrecord
+		<where>
+			<if test="isStore!=null and isStore!=''">
+				and isStore=#{isStore}
+			</if>
+			<if test="isApply!=null and isApply!=''">
+				and isApply=#{isApply}
+			</if>
+			<if test="isInform!=null and isInform!=''">
+				and isInform=#{isInform}
+			</if>
+			<if test="isRefuse!=null">
+				and isRefuse=#{isRefuse}
+			</if>
+			<!-- 学生ID -->
+			<if test="userId!=null">
+				and userId=#{userId}
+			</if>
+			<if test="resumeId!=null">
+				and resumeId=#{resumeId}
+			</if>
+			<if test="recruitInfoId!=null">
+				and recruitInfoId=#{recruitInfoId}
+			</if>
+			<if test="recruitInfoList!=null">
+				and recruitInfoId IN
+				<foreach collection="recruitInfoList" item="recruitInfo"  open="(" separator="," close=")">
+					#{recruitInfo.id}
+				</foreach>
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_applyrecord
+		<where>
+			<if test="isStore!=null and isStore!=''">
+				and isStore=#{isStore}
+			</if>
+			<if test="isApply!=null and isApply!=''">
+				and isApply=#{isApply}
+			</if>
+			<if test="isInform!=null and isInform!=''">
+				and isInform=#{isInform}
+			</if>
+			<if test="userId!=null">
+				and userId=#{userId}
+			</if>
+			<if test="resumeId!=null">
+				and resumeId=#{resumeId}
+			</if>
+			<if test="isRefuse!=null">
+				and isRefuse=#{isRefuse}
+			</if>
+			<if test="recruitInfoList!=null">
+				and recruitInfoId IN
+				<foreach collection="recruitInfoList" item="recruitInfo"  open="(" separator="," close=")">
+					#{recruitInfo.id}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="ApplyRecord">
+		insert into t_applyrecord values(null,#{user.id},#{recruitInfo.id},#{isStore},#{storeTime}
+		,#{isApply},#{applyTime},#{resume.id},#{applyState},#{isInform},#{informTime},#{informTopic}
+		,#{informContent},#{informState},#{isRefuse},#{interviewTime})
+	</insert>
+	
+	<update id="update" parameterType="ApplyRecord">
+		update t_applyrecord
+		<set>
+			<if test="isStore!=null">
+				isStore=#{isStore},
+			</if>
+			<if test="isApply!=null">
+				isApply=#{isApply},
+			</if>
+			<if test="resume!=null">
+				resumeId=#{resume.id},
+			</if>
+			<if test="applyState!=null and applyState!='' ">
+				applyState=#{applyState},
+			</if>
+			<if test="isInform!=null">
+				isInform=#{isInform},
+			</if>
+			<if test="informTime!=null">
+				informTime=#{informTime},
+			</if>
+			<if test="informTopic!=null and informTopic!='' ">
+				informTopic=#{informTopic},
+			</if> 
+			<if test="informContent!=null and informContent!='' ">
+				informContent=#{informContent},
+			</if>
+			<if test="informState!=null and informState!='' ">
+				informState=#{informState},
+			</if>
+			<if test="isRefuse!=null">
+				isRefuse=#{isRefuse},
+			</if>
+			<if test="interviewTime!=null">
+				interviewTime=#{interviewTime},
+			</if>
+			<if test="storeTime!=null">
+				storeTime=#{storeTime},
+			</if>
+			<if test="applyTime!=null">
+				applyTime=#{applyTime},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_applyrecord where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="ApplyRecordResult">
+		select * from t_applyrecord where id=#{id}
+	</select>
+</mapper> 

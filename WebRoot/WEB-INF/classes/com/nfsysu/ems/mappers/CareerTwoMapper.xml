@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.CareerTwoDao">
+
+	<resultMap type="CareerTwo" id="CareerTwoResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+	</resultMap>
+	
+	<resultMap type="CareerTwo" id="CareerTwoResultForOne">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<association property="careerOne" column="oneid" select="com.nfsysu.ems.dao.CareerOneDao.findById"></association>
+	</resultMap>
+	
+	<resultMap type="CareerTwo" id="CareerTwoResultWithThree">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<collection property="careerThreeList" column="id" select="com.nfsysu.ems.dao.CareerThreeDao.findByTwoId"></collection>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="CareerTwoResultForOne">
+		select * from careertwo
+		<where>
+			<if test="oneid!=null">
+				and oneid=#{oneid}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from careertwo
+		<where>
+			<if test="oneid!=null">
+				and oneid=#{oneid}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="CareerTwo">
+		insert into careertwo values(null,#{name},#{careerOne.id})
+	</insert>
+	
+	<update id="update" parameterType="CareerTwo">
+		update careertwo
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+			</if>
+			<if test="careerOne!=null">
+				oneid=#{careerOne.id},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from careertwo where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="CareerTwoResultForOne">
+		select * from careertwo where id=#{id}
+	</select>
+	
+	<select id="findByIdWithThree" parameterType="Integer" resultMap="CareerTwoResultWithThree">
+		select * from careertwo where id=#{id}
+	</select>
+	
+	<select id="findByOneId" parameterType="Integer" resultMap="CareerTwoResult">
+		select * from careertwo where oneid=#{id}
+	</select>
+	
+	<select id="findByOneIdWithThree" parameterType="Integer" resultMap="CareerTwoResultWithThree">
+		select * from careertwo where oneid=#{id}
+	</select>
+</mapper> 

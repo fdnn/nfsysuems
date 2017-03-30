@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.ItemExpDao">
+
+	<resultMap type="ItemExp" id="ItemExpResult">
+		<result property="id" column="id"/>
+		<result property="start" column="start"/>
+		<result property="end" column="end"/>
+		<result property="itemName" column="unitName"/>
+		<result property="description" column="unitNature"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="ItemExp">
+		insert into t_itemexp values(null,#{start},#{end},#{itemName},#{description},#{resume.id})
+	</insert>
+	
+	<update id="update" parameterType="ItemExp">
+		update t_itemexp
+		<set>
+			<if test="start!=null">
+				start=#{start},
+			</if>
+			<if test="end!=null">
+				end=#{end},
+			</if>
+			<if test="itemName!=null and itemName!='' ">
+				itemName=#{itemName},
+			</if>
+			<if test="description!=null and description!='' ">
+				description=#{description},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_itemexp where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="ItemExpResult">
+		select * from t_itemexp where id=#{id}
+	</select>
+	
+	<select id="findByResumeId" parameterType="Integer" resultMap="ItemExpResult">
+		select * from t_itemexp where resumeId=#{id}
+	</select>
+
+</mapper> 

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.NoticeDao">
+
+	<resultMap type="Notice" id="NoticeResult">
+		<result property="id" column="id"/>
+		<result property="createTime" column="createTime"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="viewedNum" column="viewedNum"/>
+		<result property="summary" column="summary"/>
+	</resultMap>
+	
+	<resultMap type="Notice" id="NoticeResultWithUser">
+		<result property="id" column="id"/>
+		<result property="createTime" column="createTime"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="viewedNum" column="viewedNum"/>
+		<result property="summary" column="summary"/>
+		<association property="user" column="userId" select="com.nfsysu.ems.dao.UserDao.findById"></association>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="NoticeResultWithUser">
+		select * from t_notice
+		<if test="user!=null">
+			, t_user
+		</if>
+		<where>
+			<if test="user!=null">
+				and t_notice.userId=t_user.id
+			</if>
+			<if test="trueName !=null and trueName !=''">
+				and t_user.trueName like #{trueName}
+			</if>
+			<if test="depId !=null and depId !=''">
+				and t_user.depId=#{depId}
+			</if>
+		</where>
+		order by t_notice.id desc
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_notice
+		<if test="user!=null">
+			, t_user
+		</if>
+		<where>
+			<if test="user!=null">
+				and t_notice.userId=t_user.id
+			</if>
+			<if test="trueName !=null and trueName !=''">
+				and t_user.trueName like #{trueName}
+			</if>
+			<if test="depId !=null and depId !=''">
+				and t_user.depId=#{depId}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="Notice">
+		insert into t_notice values(null,#{user.id},#{createTime},#{title},#{content}
+		,#{viewedNum},#{summary})
+	</insert>
+	
+	<update id="update" parameterType="Notice">
+		update t_notice
+		<set>
+			<if test="title!=null and title!=''">
+				title=#{title},
+			</if>
+			<if test="content!=null and content!=''">
+				content=#{content},
+			</if>
+			<if test="viewedNum!=null and viewedNum!=''">
+				viewedNum=#{viewedNum},
+			</if>
+			<if test="summary!=null and summary!=''">
+				summary=#{summary},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_notice where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="NoticeResultWithUser">
+		select * from t_notice where id=#{id}
+	</select>
+	
+	<select id="findByUserId" parameterType="Integer" resultMap="NoticeResult">
+		select * from t_notice where userId=#{id}
+	</select>
+	
+	<select id="getLast" parameterType="Integer" resultMap="NoticeResultWithUser">
+		select * from t_notice where id&lt;#{id} ORDER BY id DESC LIMIT 1;
+	</select>
+	
+	<select id="getNext" parameterType="Integer" resultMap="NoticeResultWithUser">
+		select * from t_notice where id&gt;#{id} ORDER BY id ASC LIMIT 1;
+	</select>
+</mapper> 

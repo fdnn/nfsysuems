@@ -1,0 +1,53 @@
+.search_box {
+    border: 1px solid #ededed;
+    padding: 20px;
+}
+
+.search {
+    padding: 20px;
+    background-color: #ededed;
+    border: 1px solid #dbdbdb;
+    border-bottom: 1px dashed #dbdbdb;
+}
+
+.search .form-control {
+    height: 28px;
+}
+
+.myInput {
+    border: 1px solid #dbdbdb;
+    height: 28px;
+
+}
+
+.salay_row .col-md-3:hover, .welfare_row .col-md-2:hover {
+    background-color: #c3c3c3;
+}
+
+.table_head {
+    padding: 10px;
+    background-color: #ededed;
+}
+
+.table td {
+    text-align: left;
+}
+
+.iconji {
+    background: rgba(0, 0, 0, 0) url("../images/iconji.gif") no-repeat scroll 0 0;
+    height: 14px;
+    width: 15px;
+}
+
+.iconjian {
+    background: rgba(0, 0, 0, 0) url("../images/iconjian.gif") no-repeat scroll 0 0;
+    height: 14px;
+    width: 15px;
+}
+
+.table_tail {
+    padding-top: 20px;
+    padding-left: 10px;
+    border-top: 1px solid #c3c3c3;
+}
+

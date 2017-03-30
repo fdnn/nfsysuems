@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.RecruitInfoDao">
+
+	<resultMap type="RecruitInfo" id="RecruitInfoResult">
+		<result property="id" column="id"/>
+		<result property="state" column="state"/>
+		<result property="refreshDate" column="refreshDate"/>
+		<result property="name" column="name"/>
+		<result property="city" column="city"/>
+		<result property="nature" column="nature"/>
+		<result property="recruitNum" column="recruitNum"/>
+		<result property="salary" column="salary"/>
+		<result property="welfare" column="welfare"/>
+		<result property="sex" column="sex"/>
+		<result property="degree" column="degree"/>
+		<result property="workExp" column="workExp"/>
+		<result property="description" column="description"/>
+		<result property="linkman" column="linkman"/>
+		<result property="tel" column="tel"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="viewedNum" column="viewedNum"/>
+		<result property="resumeNum" column="resumeNum"/>
+		<result property="linkAddress" column="linkAddress"/>
+		<result property="createDate" column="createDate"/>
+		<result property="checkedDate" column="checkedDate"/>
+		<result property="province" column="province"/>
+	</resultMap>
+
+	<resultMap type="RecruitInfo" id="RecruitInfoResultWithUser">
+		<result property="id" column="id"/>
+		<result property="state" column="state"/>
+		<result property="refreshDate" column="refreshDate"/>
+		<result property="name" column="name"/>
+		<result property="city" column="city"/>
+		<result property="nature" column="nature"/>
+		<result property="recruitNum" column="recruitNum"/>
+		<result property="salary" column="salary"/>
+		<result property="welfare" column="welfare"/>
+		<result property="sex" column="sex"/>
+		<result property="degree" column="degree"/>
+		<result property="workExp" column="workExp"/>
+		<result property="description" column="description"/>
+		<result property="linkman" column="linkman"/>
+		<result property="tel" column="tel"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="viewedNum" column="viewedNum"/>
+		<result property="resumeNum" column="resumeNum"/>
+		<result property="linkAddress" column="linkAddress"/>
+		<result property="createDate" column="createDate"/>
+		<result property="checkedDate" column="checkedDate"/>
+		<result property="province" column="province"/>
+		<association property="careerThree" column="careerThree" select="com.nfsysu.ems.dao.CareerThreeDao.findById"></association>
+		<association property="user" column="userId" select="com.nfsysu.ems.dao.UserDao.findById"></association>
+	</resultMap>
+	
+	<resultMap type="RecAResAna" id="RecruitInfoAnaResult">
+		<result property="city" column="city"/>
+		<result property="cityNum" column="cityNum"/>
+		<result property="salary" column="salary"/>
+		<result property="salaryNum" column="salaryNum"/>
+		<result property="province" column="province"/>
+		<result property="provinceNum" column="provinceNum"/>
+		<result property="createDate" column="createDate"/>
+		<result property="createDateNum" column="createDateNum"/>
+		
+		<result property="one" column="one"/>
+		<result property="two" column="two"/>
+		<result property="three" column="three"/>
+		<result property="num" column="num"/>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="RecruitInfoResultWithUser">
+		select * from t_recruitinfo
+		<where>
+			<if test="front!=null">
+				and state = "已审核"
+			</if>
+			<if test="userId!=null">
+				and userId=#{userId}
+			</if>
+			<if test="name!=null and name!=''">
+				and name like #{name}
+			</if>
+			<if test="careerOne!=null">
+				and careerOne=#{careerOne}
+			</if>
+			<if test="careerTwo!=null">
+				and careerTwo=#{careerTwo}
+			</if>
+			<if test="careerThree!=null">
+				and careerThree=#{careerThree}
+			</if>
+			<if test="province!=null and province!=''">
+				and province=#{province}
+			</if>
+			<if test="city!=null and city!=''">
+				and city=#{city}
+			</if>
+			<if test="time!=null and time!=''">
+				and DATE_SUB(CURDATE(),INTERVAL #{time} DAY) &lt;= DATE(createDate)
+			</if>
+		</where>
+		order by id desc
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_recruitinfo
+		<where>
+			<if test="front!=null">
+				and state = "已审核"
+			</if>
+			<if test="userId!=null">
+				and userId=#{userId}
+			</if>
+			<if test="name!=null and name!=''">
+				and name like #{name}
+			</if>
+			<if test="careerOne!=null">
+				and careerOne=#{careerOne}
+			</if>
+			<if test="careerTwo!=null">
+				and careerTwo=#{careerTwo}
+			</if>
+			<if test="careerThree!=null">
+				and careerThree=#{careerThree}
+			</if>
+			<if test="province!=null and province!=''">
+				and province=#{province}
+			</if>
+			<if test="city!=null and city!=''">
+				and city=#{city}
+			</if>
+			<if test="time!=null and time!=''">
+				and DATE_SUB(CURDATE(),INTERVAL #{time} DAY) &lt;= DATE(createDate)
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="RecruitInfo">
+		insert into t_recruitinfo values(null,#{user.id},#{state},#{refreshDate},#{name},#{city},#{nature}
+		,#{careerThree.id},#{recruitNum},#{salary},#{welfare},#{sex},#{degree},#{workExp},#{description},#{linkman}
+		,#{tel},#{phone},#{email},#{viewedNum},#{resumeNum},#{linkAddress},#{createDate},#{checkedDate},#{province},#{careerThree.careerTwo.id},#{careerThree.careerTwo.careerOne.id})
+	</insert>
+	
+	<update id="update" parameterType="RecruitInfo">
+		update t_recruitinfo
+		<set>
+			<if test="state!=null and state!='' ">
+				state=#{state},
+			</if>
+			<if test="refreshDate!=null ">
+				refreshDate=#{refreshDate},
+			</if>
+			<if test="name!=null and name!='' ">
+				name=#{name},
+			</if>
+			<if test="city!=null and city!='' ">
+				city=#{city},
+			</if>
+			<if test="nature!=null and nature!='' ">
+				nature=#{nature},
+			</if>
+			<if test="careerThree!=null">
+				careerThree=#{careerThree.id},
+			</if>
+			<if test="recruitNum!=null and recruitNum!='' ">
+				recruitNum=#{recruitNum},
+			</if>
+			<if test="salary!=null and salary!='' ">
+				salary=#{salary},
+			</if>
+			<if test="welfare!=null and welfare!='' ">
+				welfare=#{welfare},
+			</if>
+			<if test="sex!=null and sex!='' ">
+				sex=#{sex},
+			</if>
+			<if test="degree!=null and degree!='' ">
+				degree=#{degree},
+			</if>
+			<if test="workExp!=null and workExp!='' ">
+				workExp=#{workExp},
+			</if>
+			<if test="description!=null and description!='' ">
+				description=#{description},
+			</if>
+			<if test="linkman!=null and linkman!='' ">
+				linkman=#{linkman},
+			</if>
+			<if test="tel!=null and tel!='' ">
+				tel=#{tel},
+			</if>
+			<if test="phone!=null and phone!='' ">
+				phone=#{phone},
+			</if>
+			<if test="email!=null and email!='' ">
+				email=#{email},
+			</if>
+			<if test="viewedNum!=null">
+				viewedNum=#{viewedNum},
+			</if>
+			<if test="resumeNum!=null and resumeNum!='' ">
+				resumeNum=#{resumeNum},
+			</if>
+			<if test="linkAddress!=null and linkAddress!='' ">
+				linkAddress=#{linkAddress},
+			</if>
+			<if test="createDate!=null">
+				createDate=#{createDate},
+			</if>
+			<if test="checkedDate!=null">
+				checkedDate=#{checkedDate},
+			</if>
+			<if test="province!=null and province!=''">
+				province=#{province}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_recruitinfo where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="RecruitInfoResultWithUser">
+		select * from t_recruitinfo where id=#{id}
+	</select>
+	
+	<select id="findByUserId" parameterType="Integer" resultMap="RecruitInfoResult">
+		select * from t_recruitinfo where userId=#{id}
+	</select>
+
+	<select id="findGroupByCreateDate" resultMap="RecruitInfoAnaResult">
+		select date(dday) createDate,count(*)-1 as createDateNum from(select datelist as dday from calendar
+		 where date_sub(curdate(),interval 30 day)&lt;=date(datelist) and date(datelist)&lt;=curdate()
+		 union all select date_format(t_recruitinfo.createDate,'%Y-%m-%d') from t_recruitinfo
+		 WHERE DATE_SUB(CURDATE(),INTERVAL 30 DAY)&lt;=DATE(t_recruitinfo.createDate) 
+		 AND DATE(t_recruitinfo.createDate)&lt;=CURDATE()
+ ) a group by createDate;
+	</select>
+	
+	<select id="findGroupByCity" resultMap="RecruitInfoAnaResult">
+		select province,city,count(city) as cityNum from t_recruitinfo group by city order by province;
+	</select>
+	
+	<select id="findGroupByProvince" resultMap="RecruitInfoAnaResult">
+		select province,count(province) as provinceNum from t_recruitinfo group by province order by province;
+	</select>
+	
+	<select id="findBySalary" resultMap="RecruitInfoAnaResult">
+		select salary,count(salary) as salaryNum from t_recruitinfo group by salary;
+	</select>
+	
+	<select id="findGroupByTypeOne" resultMap="RecruitInfoAnaResult">
+		SELECT a.name AS ONE,COUNT(*) AS num 
+			FROM t_recruitinfo r LEFT JOIN careerthree c ON r.careerThree=c.id 
+			LEFT JOIN careertwo b ON c.twoid=b.id 
+			LEFT JOIN careerone a ON b.oneid=a.id 
+			GROUP BY a.name
+			ORDER BY r.careerThree
+	</select>
+	
+	<select id="findGroupByTypeTwo" resultMap="RecruitInfoAnaResult">
+		SELECT a.name AS ONE,b.name AS two,COUNT(*) AS num 
+			FROM t_recruitinfo r LEFT JOIN careerthree c ON r.careerThree=c.id 
+			LEFT JOIN careertwo b ON c.twoid=b.id 
+			LEFT JOIN careerone a ON b.oneid=a.id 
+			GROUP BY b.name
+			ORDER BY r.careerThree
+	</select>
+	
+	<select id="findGroupByTypeThree" resultMap="RecruitInfoAnaResult">
+		SELECT b.name AS two,c.name AS three,COUNT(*) AS num 
+			FROM t_recruitinfo r LEFT JOIN careerthree c ON r.careerThree=c.id 
+			LEFT JOIN careertwo b ON c.twoid=b.id 
+			LEFT JOIN careerone a ON b.oneid=a.id 
+			GROUP BY c.name
+			ORDER BY r.careerThree
+	</select>
+
+	<select id="getLast" parameterType="Integer" resultMap="RecruitInfoResultWithUser">
+		select * from t_recruitinfo where id&lt;#{id} ORDER BY id DESC LIMIT 1;
+	</select>
+	
+	<select id="getNext" parameterType="Integer" resultMap="RecruitInfoResultWithUser">
+		select * from t_recruitinfo where id&gt;#{id} ORDER BY id ASC LIMIT 1;
+	</select>
+</mapper> 

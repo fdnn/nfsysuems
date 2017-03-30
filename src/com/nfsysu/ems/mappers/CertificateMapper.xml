@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nfsysu.ems.dao.CertificateDao">
+
+	<resultMap type="Certificate" id="CertificateResult">
+		<result property="id" column="id"/>
+		<result property="time" column="time"/>
+		<result property="name" column="name"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="Certificate">
+		insert into t_certificate values(null,#{time},#{name},#{resume.id})
+	</insert>
+	
+	<update id="update" parameterType="Certificate">
+		update t_certificate
+		<set>
+			<if test="time!=null">
+				time=#{time},
+			</if>
+			<if test="name!=null and name!='' ">
+				name=#{name},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_certificate where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="CertificateResult">
+		select * from t_certificate where id=#{id}
+	</select>
+	
+	<select id="findByResumeId" parameterType="Integer" resultMap="CertificateResult">
+		select * from t_certificate where resumeId=#{id}
+	</select>
+
+</mapper> 
